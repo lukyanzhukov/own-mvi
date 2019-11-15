@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TestMVI</string>
+    <string name="show_text">Show text</string>
+</resources>
