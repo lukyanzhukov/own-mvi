@@ -4,9 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.education.testmvi.App
 import com.education.testmvi.R
-import com.education.testmvi.domain.GetTextUseCase
-import com.education.testmvi.domain.GetTextUseCaseImpl
 import com.education.testmvi.domain.MainViewState
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
@@ -15,9 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), MainView {
 
 
-    private val getTextUseCase: GetTextUseCase = GetTextUseCaseImpl()
-
-    private val presenter = MainPresenter(getTextUseCase)
+    lateinit var presenter: MainPresenter
 
     override fun showTextIntent(): Observable<Unit> = textButton.clicks()
 
@@ -32,15 +29,12 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
-
-    override fun onResume() {
-        super.onResume()
+        App.injectMainActivity(this)
         presenter.bind(this)
-
     }
-    override fun onStop() {
-        super.onStop()
+
+    override fun onDestroy() {
+        super.onDestroy()
         presenter.unbind()
     }
 

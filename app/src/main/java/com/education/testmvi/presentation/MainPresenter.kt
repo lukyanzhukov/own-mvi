@@ -19,22 +19,23 @@ class MainPresenter(private val getTextUseCase: GetTextUseCase) {
     }
 
     fun unbind() {
-        if (!compositeDisposable.isDisposed) {
-            compositeDisposable.dispose()
-        }
+        compositeDisposable.dispose()
     }
 
-    private fun mainState(): Disposable = view.showTextIntent()
-        .debounce(400, TimeUnit.MILLISECONDS)
-        .switchMap { getTextUseCase.getText() }
-        .doOnNext {
-            Timber.d("Received new state: $it")
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            { view.render(it) },
-            {
-                Timber.d(it)
+    private fun mainState(): Disposable {
+        Timber.d("mainState")
+        return view.showTextIntent()
+            .debounce(400, TimeUnit.MILLISECONDS)
+            .switchMap { getTextUseCase.getText() }
+            .doOnNext {
+                Timber.d("Received new state: $it")
             }
-        )
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { view.render(it) },
+                {
+                    Timber.d(it)
+                }
+            )
+    }
 }
